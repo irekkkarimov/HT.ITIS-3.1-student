@@ -5,6 +5,8 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     
   dotnet_rabbitmq:
     image: rabbitmq:3-alpine
@@ -35,6 +37,9 @@ services:
   dotnet_storage:
     image: dotnet-web
     
+    
+volumes: 
+  postgres_data:
     
 networks:
   dotnet_network:
