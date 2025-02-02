@@ -11,35 +11,22 @@ namespace Dotnet.Homeworks.Mailing.API.Services;
 public class MailingService : IMailingService
 {
     private readonly EmailConfig _emailConfig;
+    private readonly ILogger<MailingService> _logger;
 
-    public MailingService(IOptions<EmailConfig> emailConfig)
+    public MailingService(IOptions<EmailConfig> emailConfig, ILogger<MailingService> logger)
     {
+        _logger = logger;
         _emailConfig = emailConfig.Value;
     }
 
     public async Task<Result> SendEmailAsync(EmailMessage emailDto)
     {
-        using var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Testing mailing api", _emailConfig.Email));
-        message.To.Add(new MailboxAddress(emailDto.Email, emailDto.Email));
-        message.Subject = emailDto.Subject ?? "";
-        var bodyBuilder = new BodyBuilder
-        {
-            TextBody = $"Your message: {emailDto.Content}"
-        };
-        message.Body = bodyBuilder.ToMessageBody();
-        using var client = new SmtpClient();
-        try
-        {
-            await client.ConnectAsync(_emailConfig.Host, _emailConfig.Port, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(_emailConfig.Email, _emailConfig.Password);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
-            return new Result(true);
-        }
-        catch (Exception ex)
-        {
-            return new Result(false, $"Error while sending email: {ex.Message}");
-        }
+        await Task.Delay(5000);
+        
+        _logger.LogInformation($"From Email: {_emailConfig.Email}; From Password: {_emailConfig.Password};" +
+                               $"From Host: {_emailConfig.Host}; From Port: {_emailConfig.Port};" +
+                               $"To Email: {emailDto.Email}; Subject: {emailDto.Subject} Message: {emailDto.Content}");
+
+        return new Result(true);
     }
 }
