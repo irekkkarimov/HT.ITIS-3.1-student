@@ -5,8 +5,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 as build
 WORKDIR /src
-COPY ["Dotnet.Homeworks.MainProject/Dotnet.Homerworks.MainProject.csproj", "Dotnet.Homeworks.MainProject"]
-RUN dotnet restore "Dotnet.Homeworks.MainProjectDotnet.Homeworks.MainProject.csproj"
+COPY ["Dotnet.Homeworks.MainProject/Dotnet.Homeworks.MainProject.csproj", "Dotnet.Homeworks.MainProject/"]
+RUN dotnet restore "Dotnet.Homeworks.MainProject/Dotnet.Homeworks.MainProject.csproj"
 COPY . .
 WORKDIR "/src/Dotnet.Homeworks.MainProject"
 RUN dotnet build "Dotnet.Homeworks.MainProject.csproj" -c Release -o /app/build
