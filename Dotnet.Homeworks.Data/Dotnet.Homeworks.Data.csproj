@@ -16,4 +16,13 @@
       <ProjectReference Include="..\Dotnet.Homeworks.Domain\Dotnet.Homeworks.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DataPersistence\Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="DataPersistence\Migrations\20250128201632_add-users-and-products.cs" />
+      <Compile Remove="DataPersistence\Migrations\20250128201632_add-users-and-products.Designer.cs" />
+    </ItemGroup>
+
 </Project>
