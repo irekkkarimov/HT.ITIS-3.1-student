@@ -8,7 +8,11 @@ services:
       POSTGRES_DB: Dotnet.Homeworks.MainProject.Data
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    
+    ports:
+      - "5927:5432"
+    networks:
+      - dotnet_network
+  
   dotnet_rabbitmq:
     image: rabbitmq:3-management
     ports:
