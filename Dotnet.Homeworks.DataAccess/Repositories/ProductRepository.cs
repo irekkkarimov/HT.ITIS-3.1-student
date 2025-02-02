@@ -1,27 +1,49 @@
+using Dotnet.Homeworks.Data.DatabaseContext;
 using Dotnet.Homeworks.Domain.Abstractions.Repositories;
 using Dotnet.Homeworks.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Dotnet.Homeworks.DataAccess.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public Task<IEnumerable<Product>> GetAllProductsAsync(CancellationToken cancellationToken)
+    private readonly AppDbContext _dbContext;
+
+    public ProductRepository(AppDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
-    public Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Product>> GetAllProductsAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Products.ToListAsync(cancellationToken);
     }
 
-    public Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
+    public async Task DeleteProductByGuidAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var product = await _dbContext.Products
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+        if (product is null)
+            throw new ApplicationException("Product not found");
+
+        _dbContext.Products.Remove(product);
     }
 
-    public Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken)
+    public async Task UpdateProductAsync(Product product, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var productFromDb = await _dbContext.Products
+            .FirstOrDefaultAsync(p => p.Id == product.Id, cancellationToken);
+
+        if (productFromDb is null)
+            throw new ApplicationException("Product not found");
+
+        productFromDb.Name = product.Name;
+    }
+
+    public async Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken)
+    {
+        await _dbContext.Products.AddAsync(product, cancellationToken);
+        return product.Id;
     }
 }

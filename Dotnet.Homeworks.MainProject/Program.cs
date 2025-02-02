@@ -1,4 +1,6 @@
 using Dotnet.Homeworks.Data.DatabaseContext;
+using Dotnet.Homeworks.Features.ServiceExtensions;
+using Dotnet.Homeworks.Infrastructure.ServiceExtensions;
 using Dotnet.Homeworks.MainProject.Configuration;
 using Dotnet.Homeworks.MainProject.Services;
 using Dotnet.Homeworks.MainProject.ServicesExtensions.Masstransit;
@@ -10,8 +12,14 @@ builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 
+Console.WriteLine(builder.Configuration.GetConnectionString("Default"));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
+
+builder.Services
+    .AddInfrastructure()
+    .AddFeatures();
 
 builder.Services.AddSingleton<IRegistrationService, RegistrationService>();
 builder.Services.AddSingleton<ICommunicationService, CommunicationService>();
