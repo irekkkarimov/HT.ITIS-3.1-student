@@ -40,13 +40,20 @@ services:
 #  dotnet_mongodb:
 #    image: mongo:latest
     
-#  dotnet_jaeger:
-#    image: jaegertracing/all-in-one:latest
+  dotnet_jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+    networks:
+      - dotnet_network
     
   dotnet_main:
     depends_on: 
       - dotnet_postgres
       - dotnet_rabbitmq
+      - dotnet_jaeger
     build:
       context: .
       dockerfile: Dotnet.Homeworks.MainProject/Dockerfile
@@ -55,6 +62,7 @@ services:
       RabbitMqConfig__Username: "irek"
       RabbitMqConfig__Password: "irek"
       RabbitMqConfig__Hostname: "dotnet_rabbitmq:5672"
+      OpenTelemetryConfig__OtlpExporterEndpoint: "http://dotnet_jaeger:16686"
     ports:
       - "80:80"
     networks:
