@@ -9,9 +9,20 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     
-#  dotnet_rabbitmq:
-#    image: rabbitmq:3-alpine
-    
+  dotnet_rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "8080:15672"
+      - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: irek
+      RABBITMQ_DEFAULT_PASS: irek
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia/
+    networks:
+      - dotnet_network
+  
+  
 #  dotnet_minio:
 #    image: minio/minio:latest
     
@@ -24,18 +35,36 @@ services:
   dotnet_main:
     depends_on: 
       - dotnet_postgres
+      - dotnet_rabbitmq
     build:
       context: .
       dockerfile: Dotnet.Homeworks.MainProject/Dockerfile
     environment:
       ConnectionStrings__Default: "User ID=postgres;Password=root;Host=dotnet_postgres;Port=5432;Database=Dotnet.Homeworks.MainProject.Data"
+      RabbitMqConfig__Username: "irek"
+      RabbitMqConfig__Password: "irek"
+      RabbitMqConfig__Hostname: "dotnet_rabbitmq:5672"
     ports:
       - "80:80"
     networks:
       - dotnet_network
   
-#  dotnet_mailing:
-#    image: dotnet-web
+  dotnet_mailing:
+    depends_on:
+      - dotnet_rabbitmq
+    build:
+      context: .
+      dockerfile: Dotnet.Homeworks.Mailing.API/Dockerfile
+    environment:
+      EmailConfig__Email: "irek@mail.ru"
+      EmailConfig__Host: "irek_host"
+      EmailConfig__Port: "1234"
+      EmailConfig__Password: "irek_password"
+      RabbitMqConfig__Username: "irek"
+      RabbitMqConfig__Password: "irek"
+      RabbitMqConfig__Hostname: "dotnet_rabbitmq:5672"
+    networks:
+      - dotnet_network
     
 #  dotnet_storage:
 #    image: dotnet-web
@@ -43,6 +72,7 @@ services:
     
 volumes: 
   postgres_data:
+  rabbitmq_data:
     
 networks:
   dotnet_network:

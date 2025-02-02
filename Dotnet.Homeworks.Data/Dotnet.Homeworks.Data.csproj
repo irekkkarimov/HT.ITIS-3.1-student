@@ -8,10 +8,21 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.8" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Dotnet.Homeworks.Domain\Dotnet.Homeworks.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="DataPersistence\Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="DataPersistence\Migrations\20250128201632_add-users-and-products.cs" />
+      <Compile Remove="DataPersistence\Migrations\20250128201632_add-users-and-products.Designer.cs" />
     </ItemGroup>
 
 </Project>
